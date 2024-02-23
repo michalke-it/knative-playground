@@ -72,10 +72,10 @@ Vagrant.configure("2") do |config|
   # documentation for more information about their specific syntax and use.
    config.vm.provision "shell", inline: <<-SHELL
      curl -sfL https://get.k3s.io | sh
-     sudo -E kubectl apply -f https://github.com/knative/serving/releases/download/knative-v1.10.2/serving-crds.yaml
-     sudo -E kubectl apply -f https://github.com/knative/serving/releases/download/knative-v1.10.2/serving-core.yaml
+     sudo -E kubectl apply -f https://github.com/knative/serving/releases/download/knative-v1.13.1/serving-crds.yaml
+     sudo -E kubectl apply -f https://github.com/knative/serving/releases/download/knative-v1.13.1/serving-core.yaml
      sleep 60
-     sudo -E kubectl apply -f https://github.com/knative/net-kourier/releases/download/knative-v1.10.0/kourier.yaml
+     sudo -E kubectl apply -f https://github.com/knative/net-kourier/releases/download/knative-v1.13.0/kourier.yaml
      sleep 60
      sudo -E kubectl patch configmap/config-network \
        --namespace knative-serving \
@@ -85,9 +85,10 @@ Vagrant.configure("2") do |config|
        --namespace knative-serving \
        --type merge \
        --patch '{"data":{"localhost":""}}'
-     wget https://github.com/knative/client/releases/download/knative-v1.11.0/kn-linux-amd64
+     wget https://github.com/knative/client/releases/download/knative-v1.13.0/kn-linux-amd64
      sudo chmod +x kn-linux-amd64
      sudo mv kn-linux-amd64 /usr/local/bin/kn
-     sudo -E kn --kubeconfig /etc/rancher/k3s/k3s.yaml service create echo --image=quay.io/redhattraining/kbe-knative-echo:v1 --port=8080
+     sudo -E kn --kubeconfig /etc/rancher/k3s/k3s.yaml service create echo --image=quay.io/redhattraining/kbe-knative-echo:v1
+     echo "Now, find your exposed port through 'sudo -E kubectl --namespace kourier-system get service kourier' and query as follows: curl -H "Host: [FUNCTION].default.localhost" -X POST -d "[DATA]" http://127.0.0.1:[PORT]"
    SHELL
 end
